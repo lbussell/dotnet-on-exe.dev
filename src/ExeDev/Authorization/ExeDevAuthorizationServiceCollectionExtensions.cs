@@ -22,7 +22,7 @@ public static class ExeDevAuthorizationServiceCollectionExtensions
     public static IServiceCollection AddExeDevOwnerPolicy(this IServiceCollection services)
     {
         services.AddExeDevReflection();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IAuthorizationHandler, OwnerAuthorizationHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IAuthorizationHandler, OwnerAuthorizationHandler>());
 
         services
             .AddAuthorizationBuilder()
