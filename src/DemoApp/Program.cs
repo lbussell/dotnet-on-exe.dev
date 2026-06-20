@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System.Text.Json.Serialization;
+using LoganBussell.ExeDev;
 using LoganBussell.ExeDev.Authentication;
 using LoganBussell.ExeDev.Authorization;
 
@@ -12,11 +13,10 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonContext.Default);
 });
 
-builder.Services.AddExeDevAuthentication(options =>
+builder.Services.AddExeDev(options =>
 {
     options.RedirectToLoginOnChallenge = true;
 });
-builder.Services.AddExeDevOwnerPolicy();
 
 var app = builder.Build();
 
