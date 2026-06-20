@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
 
@@ -17,6 +18,9 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
 {
     /// <summary>Base address of the exe.dev reflection integration.</summary>
     public static readonly Uri BaseAddress = new("https://reflection.int.exe.xyz/");
+
+    /// <summary>Maximum time to wait for reflection integration responses.</summary>
+    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     public async Task<string?> GetOwnerEmailAsync(CancellationToken cancellationToken = default)
     {
@@ -77,7 +81,26 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
         {
             return await httpClient.GetFromJsonAsync(path, typeInfo, cancellationToken);
         }
-        catch (Exception ex)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (OperationCanceledException ex)
+        {
+            logger.LogWarning(ex, "Timed out reading '{Path}' from the exe.dev reflection integration.", path);
+            return null;
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogWarning(ex, "Unable to read '{Path}' from the exe.dev reflection integration.", path);
+            return null;
+        }
+        catch (JsonException ex)
+        {
+            logger.LogWarning(ex, "Invalid JSON reading '{Path}' from the exe.dev reflection integration.", path);
+            return null;
+        }
+        catch (NotSupportedException ex)
         {
             logger.LogWarning(ex, "Unable to read '{Path}' from the exe.dev reflection integration.", path);
             return null;

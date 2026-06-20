@@ -4,6 +4,7 @@
 using System.Security.Claims;
 using LoganBussell.ExeDev.Integrations.Reflection;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace LoganBussell.ExeDev.Authorization;
 
@@ -31,7 +32,11 @@ public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : Au
             return;
         }
 
-        string? ownerEmail = await reflection.GetOwnerEmailAsync();
+        CancellationToken cancellationToken = context.Resource is HttpContext httpContext
+            ? httpContext.RequestAborted
+            : CancellationToken.None;
+
+        string? ownerEmail = await reflection.GetOwnerEmailAsync(cancellationToken);
         if (!string.IsNullOrEmpty(ownerEmail) && string.Equals(email, ownerEmail, StringComparison.OrdinalIgnoreCase))
         {
             context.Succeed(requirement);

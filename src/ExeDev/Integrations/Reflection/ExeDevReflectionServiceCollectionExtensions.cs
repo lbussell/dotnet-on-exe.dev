@@ -19,6 +19,7 @@ public static class ExeDevReflectionServiceCollectionExtensions
         services.AddHttpClient<IExeDevReflection, ExeDevReflectionService>(client =>
         {
             client.BaseAddress = ExeDevReflectionService.BaseAddress;
+            client.Timeout = ExeDevReflectionService.Timeout;
         });
 
         return services;
