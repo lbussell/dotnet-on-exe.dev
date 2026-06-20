@@ -1,0 +1,40 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 Logan Bussell
+// SPDX-License-Identifier: MIT
+
+using System.Security.Claims;
+using LoganBussell.ExeDev.Integrations.Reflection;
+using Microsoft.AspNetCore.Authorization;
+
+namespace LoganBussell.ExeDev.Authorization;
+
+/// <summary>
+/// Authorization requirement satisfied only by the VM owner, as reported by the
+/// exe.dev Reflection integration.
+/// </summary>
+public sealed class OwnerRequirement : IAuthorizationRequirement;
+
+/// <summary>
+/// Grants <see cref="OwnerRequirement"/> when the authenticated user's email
+/// matches the VM owner's email. Authentication establishes <em>who</em> the
+/// user is; this handler decides whether that identity is the owner.
+/// </summary>
+public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : AuthorizationHandler<OwnerRequirement>
+{
+    protected override async Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        OwnerRequirement requirement
+    )
+    {
+        string? email = context.User.FindFirst(ClaimTypes.Email)?.Value;
+        if (string.IsNullOrEmpty(email))
+        {
+            return;
+        }
+
+        string? ownerEmail = await reflection.GetOwnerEmailAsync();
+        if (!string.IsNullOrEmpty(ownerEmail) && string.Equals(email, ownerEmail, StringComparison.OrdinalIgnoreCase))
+        {
+            context.Succeed(requirement);
+        }
+    }
+}
