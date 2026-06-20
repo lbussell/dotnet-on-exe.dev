@@ -38,7 +38,7 @@ public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : Au
             : CancellationToken.None;
 
         string? ownerEmail = await GetOwnerEmailAsync(cancellationToken);
-        if (!string.IsNullOrEmpty(ownerEmail) && string.Equals(user.Email, ownerEmail, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(user.Email, ownerEmail, StringComparison.OrdinalIgnoreCase))
         {
             context.Succeed(requirement);
         }
