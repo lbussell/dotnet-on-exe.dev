@@ -22,7 +22,6 @@ public static class ExeDevAuthorizationServiceCollectionExtensions
     public static IServiceCollection AddExeDevOwnerPolicy(this IServiceCollection services)
     {
         services.AddExeDevReflection();
-        services.TryAddSingleton<ExeDevOwnerEmailCache>();
         services.TryAddEnumerable(ServiceDescriptor.Scoped<IAuthorizationHandler, OwnerAuthorizationHandler>());
 
         services

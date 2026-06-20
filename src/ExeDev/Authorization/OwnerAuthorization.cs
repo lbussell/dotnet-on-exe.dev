@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using LoganBussell.ExeDev.Authentication;
+using LoganBussell.ExeDev.Integrations.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
@@ -18,8 +19,10 @@ public sealed class OwnerRequirement : IAuthorizationRequirement;
 /// matches the VM owner's email. Authentication establishes <em>who</em> the
 /// user is; this handler decides whether that identity is the owner.
 /// </summary>
-public sealed class OwnerAuthorizationHandler(ExeDevOwnerEmailCache ownerEmailCache) : AuthorizationHandler<OwnerRequirement>
+public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : AuthorizationHandler<OwnerRequirement>
 {
+    private static string? s_ownerEmail;
+
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         OwnerRequirement requirement
@@ -34,10 +37,26 @@ public sealed class OwnerAuthorizationHandler(ExeDevOwnerEmailCache ownerEmailCa
             ? httpContext.RequestAborted
             : CancellationToken.None;
 
-        string? ownerEmail = await ownerEmailCache.GetOwnerEmailAsync(cancellationToken);
+        string? ownerEmail = await GetOwnerEmailAsync(cancellationToken);
         if (!string.IsNullOrEmpty(ownerEmail) && string.Equals(user.Email, ownerEmail, StringComparison.OrdinalIgnoreCase))
         {
             context.Succeed(requirement);
         }
+    }
+
+    private async Task<string?> GetOwnerEmailAsync(CancellationToken cancellationToken)
+    {
+        if (!string.IsNullOrEmpty(s_ownerEmail))
+        {
+            return s_ownerEmail;
+        }
+
+        string? ownerEmail = await reflection.GetOwnerEmailAsync(cancellationToken);
+        if (!string.IsNullOrEmpty(ownerEmail))
+        {
+            s_ownerEmail = ownerEmail;
+        }
+
+        return ownerEmail;
     }
 }
