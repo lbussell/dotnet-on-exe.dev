@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 
 namespace LoganBussell.ExeDev.Authentication;
 
@@ -20,14 +19,4 @@ public sealed class ExeDevAuthenticationOptions : AuthenticationSchemeOptions
     /// Redirects unauthenticated challenges to exe.dev's login endpoint instead of returning 401.
     /// </summary>
     public bool RedirectToLoginOnChallenge { get; set; }
-
-    /// <summary>
-    /// The exe.dev login path used when <see cref="RedirectToLoginOnChallenge"/> is enabled.
-    /// </summary>
-    public PathString LoginPath { get; set; } = ExeDevAuthenticationDefaults.LoginPath;
-
-    /// <summary>
-    /// Query parameter name used to pass the current path to <see cref="LoginPath"/>.
-    /// </summary>
-    public string RedirectParameterName { get; set; } = ExeDevAuthenticationDefaults.LoginRedirectParameterName;
 }

@@ -65,8 +65,8 @@ public sealed class ExeDevAuthenticationHandler(
         }
 
         string loginUrl = QueryHelpers.AddQueryString(
-            Options.LoginPath.ToString(),
-            Options.RedirectParameterName,
+            ExeDevAuthenticationDefaults.LoginPath,
+            ExeDevAuthenticationDefaults.LoginRedirectParameterName,
             currentPath
         );
 
