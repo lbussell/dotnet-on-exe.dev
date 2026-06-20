@@ -3,8 +3,9 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using LoganBussell.ExeDev.Authentication;
 
-namespace LoganBussell.ExeDev.Authentication;
+namespace LoganBussell.ExeDev;
 
 /// <summary>
 /// Extension methods for registering exe.dev proxy-header authentication.

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Logan Bussell
 // SPDX-License-Identifier: MIT
 
-namespace LoganBussell.ExeDev.Authentication;
+namespace LoganBussell.ExeDev;
 
 /// <summary>
 /// The user identity injected by exe.dev's HTTP proxy.

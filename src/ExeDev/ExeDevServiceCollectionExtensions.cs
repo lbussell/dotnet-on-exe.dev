@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Logan Bussell
 // SPDX-License-Identifier: MIT
 
-using LoganBussell.ExeDev.Authentication;
-using LoganBussell.ExeDev.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 

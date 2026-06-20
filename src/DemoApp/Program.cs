@@ -3,8 +3,6 @@
 
 using System.Text.Json.Serialization;
 using LoganBussell.ExeDev;
-using LoganBussell.ExeDev.Authentication;
-using LoganBussell.ExeDev.Authorization;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 

@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Authentication;
 
-namespace LoganBussell.ExeDev.Authentication;
+namespace LoganBussell.ExeDev;
 
 /// <summary>
 /// Options for authenticating requests from exe.dev's HTTP proxy.

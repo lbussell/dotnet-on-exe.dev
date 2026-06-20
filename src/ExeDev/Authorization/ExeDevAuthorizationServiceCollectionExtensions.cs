@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Logan Bussell
 // SPDX-License-Identifier: MIT
 
+using LoganBussell.ExeDev.Authorization;
 using LoganBussell.ExeDev.Integrations.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace LoganBussell.ExeDev.Authorization;
+namespace LoganBussell.ExeDev;
 
 /// <summary>
 /// Extension methods for registering exe.dev owner authorization.

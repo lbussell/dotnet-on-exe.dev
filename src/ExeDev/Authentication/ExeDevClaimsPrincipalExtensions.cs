@@ -4,7 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
-namespace LoganBussell.ExeDev.Authentication;
+namespace LoganBussell.ExeDev;
 
 /// <summary>
 /// Helpers for reading the exe.dev authenticated user from a claims principal.

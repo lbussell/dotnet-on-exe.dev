@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Builder;
 
-namespace LoganBussell.ExeDev.Authorization;
+namespace LoganBussell.ExeDev;
 
 /// <summary>
 /// Endpoint convenience extensions for exe.dev owner authorization.
