@@ -21,8 +21,6 @@ public sealed class OwnerRequirement : IAuthorizationRequirement;
 /// </summary>
 public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : AuthorizationHandler<OwnerRequirement>
 {
-    private static string? s_ownerEmail;
-
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         OwnerRequirement requirement
@@ -37,26 +35,10 @@ public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : Au
             ? httpContext.RequestAborted
             : CancellationToken.None;
 
-        string? ownerEmail = await GetOwnerEmailAsync(cancellationToken);
+        string? ownerEmail = await reflection.GetOwnerEmailAsync(cancellationToken);
         if (string.Equals(user.Email, ownerEmail, StringComparison.OrdinalIgnoreCase))
         {
             context.Succeed(requirement);
         }
-    }
-
-    private async Task<string?> GetOwnerEmailAsync(CancellationToken cancellationToken)
-    {
-        if (!string.IsNullOrEmpty(s_ownerEmail))
-        {
-            return s_ownerEmail;
-        }
-
-        string? ownerEmail = await reflection.GetOwnerEmailAsync(cancellationToken);
-        if (!string.IsNullOrEmpty(ownerEmail))
-        {
-            s_ownerEmail = ownerEmail;
-        }
-
-        return ownerEmail;
     }
 }
