@@ -10,8 +10,7 @@ namespace LoganBussell.ExeDev.Integrations.Reflection;
 
 /// <summary>
 /// Default <see cref="IExeDevReflection"/> implementation backed by an
-/// <see cref="HttpClient"/> pointed at the reflection integration. Each call
-/// fetches fresh data because VM metadata can change over time.
+/// <see cref="HttpClient"/> pointed at the reflection integration.
 /// </summary>
 public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDevReflectionService> logger)
     : IExeDevReflection
