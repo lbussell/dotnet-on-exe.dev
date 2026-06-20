@@ -20,19 +20,18 @@ public static class ExeDevAuthenticationServiceCollectionExtensions
     /// headers injected by exe.dev's HTTP proxy.
     /// </summary>
     /// <param name="services">The service collection to add to.</param>
-    /// <param name="authenticationScheme">
-    /// The scheme name to register. Defaults to
-    /// <see cref="ExeDevAuthenticationDefaults.AuthenticationScheme"/>.
-    /// </param>
+    /// <param name="configureOptions">Configures exe.dev authentication behavior.</param>
     /// <returns>
     /// The <see cref="AuthenticationBuilder"/> so additional schemes can be chained.
     /// </returns>
     public static AuthenticationBuilder AddExeDevAuthentication(
         this IServiceCollection services,
-        string authenticationScheme = ExeDevAuthenticationDefaults.AuthenticationScheme
+        Action<ExeDevAuthenticationOptions>? configureOptions = null
     )
     {
-        return services.AddAuthentication(authenticationScheme).AddExeDevAuthentication(authenticationScheme);
+        return services
+            .AddAuthentication(ExeDevAuthenticationDefaults.AuthenticationScheme)
+            .AddExeDevAuthentication(configureOptions);
     }
 
     /// <summary>
@@ -40,18 +39,17 @@ public static class ExeDevAuthenticationServiceCollectionExtensions
     /// headers injected by exe.dev's HTTP proxy.
     /// </summary>
     /// <param name="services">The service collection to add to.</param>
-    /// <param name="configureOptions">Configures exe.dev authentication behavior.</param>
     /// <param name="authenticationScheme">
-    /// The scheme name to register. Defaults to
-    /// <see cref="ExeDevAuthenticationDefaults.AuthenticationScheme"/>.
+    /// The scheme name to register.
     /// </param>
+    /// <param name="configureOptions">Configures exe.dev authentication behavior.</param>
     /// <returns>
     /// The <see cref="AuthenticationBuilder"/> so additional schemes can be chained.
     /// </returns>
     public static AuthenticationBuilder AddExeDevAuthentication(
         this IServiceCollection services,
-        Action<ExeDevAuthenticationOptions> configureOptions,
-        string authenticationScheme = ExeDevAuthenticationDefaults.AuthenticationScheme
+        string authenticationScheme,
+        Action<ExeDevAuthenticationOptions>? configureOptions = null
     )
     {
         return services.AddAuthentication(authenticationScheme).AddExeDevAuthentication(authenticationScheme, configureOptions);
@@ -63,22 +61,13 @@ public static class ExeDevAuthenticationServiceCollectionExtensions
     /// </summary>
     public static AuthenticationBuilder AddExeDevAuthentication(
         this AuthenticationBuilder builder,
-        string authenticationScheme = ExeDevAuthenticationDefaults.AuthenticationScheme
+        Action<ExeDevAuthenticationOptions>? configureOptions = null
     )
     {
-        return builder.AddExeDevAuthentication(authenticationScheme, static _ => { });
-    }
-
-    /// <summary>
-    /// Adds the exe.dev proxy-header authentication scheme to an existing
-    /// <see cref="AuthenticationBuilder"/>.
-    /// </summary>
-    public static AuthenticationBuilder AddExeDevAuthentication(
-        this AuthenticationBuilder builder,
-        Action<ExeDevAuthenticationOptions> configureOptions
-    )
-    {
-        return builder.AddExeDevAuthentication(ExeDevAuthenticationDefaults.AuthenticationScheme, configureOptions);
+        return builder.AddExeDevAuthentication(
+            ExeDevAuthenticationDefaults.AuthenticationScheme,
+            configureOptions
+        );
     }
 
     /// <summary>
@@ -88,14 +77,14 @@ public static class ExeDevAuthenticationServiceCollectionExtensions
     public static AuthenticationBuilder AddExeDevAuthentication(
         this AuthenticationBuilder builder,
         string authenticationScheme,
-        Action<ExeDevAuthenticationOptions> configureOptions
+        Action<ExeDevAuthenticationOptions>? configureOptions = null
     )
     {
-        ArgumentNullException.ThrowIfNull(configureOptions);
-
         return builder.AddScheme<ExeDevAuthenticationOptions, ExeDevAuthenticationHandler>(
             authenticationScheme,
-            configureOptions
+            configureOptions ?? ConfigureDefaults
         );
     }
+
+    private static void ConfigureDefaults(ExeDevAuthenticationOptions options) { }
 }
