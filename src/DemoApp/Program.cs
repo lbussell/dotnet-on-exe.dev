@@ -28,54 +28,38 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Report the user identified by exe.dev's HTTP proxy headers.
-app.MapGet(
-    "/",
-    (HttpContext context) =>
-    {
-        if (!context.User.TryGetExeDevUser(out ExeDevUser? user))
-        {
-            return new ExeDevUserStatus(Authenticated: false, UserId: null, Email: null);
-        }
-
-        return new ExeDevUserStatus(Authenticated: true, UserId: user.UserId, Email: user.Email);
-    }
-);
+app.MapGet("/", GetUserStatus);
 
 // Only reachable by users authenticated through exe.dev. Anonymous requests
 // (which the proxy never adds identity headers to) receive a 401 response.
-app.MapGet(
-        "/me",
-        (HttpContext context) =>
-        {
-            ExeDevUser user = context.User.GetExeDevUser();
-
-            return new ExeDevUserResponse(
-                Authenticated: true,
-                UserId: user.UserId,
-                Email: user.Email
-            );
-        }
-    )
-    .RequireAuthorization();
+app.MapGet("/me", GetUserResponse).RequireAuthorization();
 
 // Only reachable by the VM owner, identified via the exe.dev Reflection
 // integration. Authenticated non-owners receive 403; anonymous requests 401.
-app.MapGet(
-        "/admin",
-        (HttpContext context) =>
-        {
-            ExeDevUser user = context.User.GetExeDevUser();
-
-            return new ExeDevUserResponse(
-                Authenticated: true,
-                UserId: user.UserId,
-                Email: user.Email
-            );
-        }
-    )
-    .RequireExeDevOwner();
+app.MapGet("/admin", GetUserResponse).RequireExeDevOwner();
 
 app.Run();
+
+static ExeDevUserStatus GetUserStatus(HttpContext context)
+{
+    if (!context.User.TryGetExeDevUser(out ExeDevUser? user))
+    {
+        return new ExeDevUserStatus(Authenticated: false, UserId: null, Email: null);
+    }
+
+    return new ExeDevUserStatus(Authenticated: true, UserId: user.UserId, Email: user.Email);
+}
+
+static ExeDevUserResponse GetUserResponse(HttpContext context)
+{
+    ExeDevUser user = context.User.GetExeDevUser();
+
+    return new ExeDevUserResponse(
+        Authenticated: true,
+        UserId: user.UserId,
+        Email: user.Email
+    );
+}
 
 internal record ExeDevUserStatus(bool Authenticated, string? UserId, string? Email);
 
