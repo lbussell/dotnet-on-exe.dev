@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Logan Bussell
 // SPDX-License-Identifier: MIT
 
-using System.Security.Claims;
+using LoganBussell.ExeDev.Authentication;
 using LoganBussell.ExeDev.Integrations.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -26,8 +26,7 @@ public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : Au
         OwnerRequirement requirement
     )
     {
-        string? email = context.User.FindFirst(ClaimTypes.Email)?.Value;
-        if (string.IsNullOrEmpty(email))
+        if (!context.User.TryGetExeDevUser(out ExeDevUser? user))
         {
             return;
         }
@@ -37,7 +36,7 @@ public sealed class OwnerAuthorizationHandler(IExeDevReflection reflection) : Au
             : CancellationToken.None;
 
         string? ownerEmail = await reflection.GetOwnerEmailAsync(cancellationToken);
-        if (!string.IsNullOrEmpty(ownerEmail) && string.Equals(email, ownerEmail, StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrEmpty(ownerEmail) && string.Equals(user.Email, ownerEmail, StringComparison.OrdinalIgnoreCase))
         {
             context.Succeed(requirement);
         }

@@ -37,14 +37,12 @@ public sealed class ExeDevAuthenticationHandler(
             return Task.FromResult(AuthenticateResult.NoResult());
         }
 
-        var claim = new Claim(ClaimTypes.NameIdentifier, userId);
-        List<Claim> claims = [claim];
-
-        if (!string.IsNullOrEmpty(email))
-        {
-            claims.Add(new Claim(ClaimTypes.Email, email));
-            claims.Add(new Claim(ClaimTypes.Name, email));
-        }
+        List<Claim> claims =
+        [
+            new Claim(ClaimTypes.NameIdentifier, userId),
+            new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.Name, email),
+        ];
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);

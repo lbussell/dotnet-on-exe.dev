@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 Logan Bussell
 // SPDX-License-Identifier: MIT
 
-using System.Security.Claims;
 using System.Text.Json.Serialization;
 using LoganBussell.ExeDev.Authentication;
 using LoganBussell.ExeDev.Authorization;
@@ -35,10 +34,12 @@ app.MapGet(
     "/",
     (HttpContext context) =>
     {
-        string? userId = context.Request.Headers[ExeDevAuthenticationDefaults.UserIdHeader];
-        string? email = context.Request.Headers[ExeDevAuthenticationDefaults.EmailHeader];
+        if (!context.User.TryGetExeDevUser(out ExeDevUser? user))
+        {
+            return new ExeDevUserStatus(Authenticated: false, UserId: null, Email: null);
+        }
 
-        return new ExeDevUser(Authenticated: !string.IsNullOrEmpty(userId), UserId: userId, Email: email);
+        return new ExeDevUserStatus(Authenticated: true, UserId: user.UserId, Email: user.Email);
     }
 );
 
@@ -48,12 +49,12 @@ app.MapGet(
         "/me",
         (HttpContext context) =>
         {
-            var user = context.User;
+            ExeDevUser user = context.User.GetExeDevUser();
 
-            return new ExeDevUser(
+            return new ExeDevUserResponse(
                 Authenticated: true,
-                UserId: user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                Email: user.FindFirst(ClaimTypes.Email)?.Value
+                UserId: user.UserId,
+                Email: user.Email
             );
         }
     )
@@ -65,12 +66,12 @@ app.MapGet(
         "/admin",
         (HttpContext context) =>
         {
-            var user = context.User;
+            ExeDevUser user = context.User.GetExeDevUser();
 
-            return new ExeDevUser(
+            return new ExeDevUserResponse(
                 Authenticated: true,
-                UserId: user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                Email: user.FindFirst(ClaimTypes.Email)?.Value
+                UserId: user.UserId,
+                Email: user.Email
             );
         }
     )
@@ -78,9 +79,12 @@ app.MapGet(
 
 app.Run();
 
-internal record ExeDevUser(bool Authenticated, string? UserId, string? Email);
+internal record ExeDevUserStatus(bool Authenticated, string? UserId, string? Email);
 
-[JsonSerializable(typeof(ExeDevUser))]
+internal record ExeDevUserResponse(bool Authenticated, string UserId, string Email);
+
+[JsonSerializable(typeof(ExeDevUserStatus))]
+[JsonSerializable(typeof(ExeDevUserResponse))]
 internal partial class AppJsonContext : JsonSerializerContext;
 
 static class DebugUserExtensions
