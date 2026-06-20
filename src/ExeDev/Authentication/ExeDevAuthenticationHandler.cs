@@ -4,6 +4,7 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,11 +15,15 @@ namespace LoganBussell.ExeDev.Authentication;
 /// only adds these headers for users it has authenticated, so their presence is sufficient proof
 /// of identity. See https://exe.dev/docs/login-with-exe.md.
 /// </summary>
+/// <remarks>
+/// This handler must be used only for traffic that reaches the app through exe.dev's trusted HTTP
+/// proxy. Directly reachable apps must prevent clients from supplying the trusted identity headers.
+/// </remarks>
 public sealed class ExeDevAuthenticationHandler(
-    IOptionsMonitor<AuthenticationSchemeOptions> options,
+    IOptionsMonitor<ExeDevAuthenticationOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder
-) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
+) : AuthenticationHandler<ExeDevAuthenticationOptions>(options, logger, encoder)
 {
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -46,5 +51,28 @@ public sealed class ExeDevAuthenticationHandler(
         var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
         return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+
+    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
+    {
+        if (!Options.RedirectToLoginOnChallenge)
+        {
+            return base.HandleChallengeAsync(properties);
+        }
+
+        string currentPath = string.Concat(Request.PathBase, Request.Path, Request.QueryString);
+        if (string.IsNullOrEmpty(currentPath))
+        {
+            currentPath = "/";
+        }
+
+        string loginUrl = QueryHelpers.AddQueryString(
+            Options.LoginPath.ToString(),
+            Options.RedirectParameterName,
+            currentPath
+        );
+
+        Response.Redirect(loginUrl);
+        return Task.CompletedTask;
     }
 }

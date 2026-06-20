@@ -17,4 +17,10 @@ public static class ExeDevAuthenticationDefaults
 
     /// <summary>Header carrying the user's email address.</summary>
     public const string EmailHeader = "X-ExeDev-Email";
+
+    /// <summary>Path for exe.dev's hosted login endpoint.</summary>
+    public const string LoginPath = "/__exe.dev/login";
+
+    /// <summary>Query parameter used by exe.dev's login endpoint for the post-login return path.</summary>
+    public const string LoginRedirectParameterName = "redirect";
 }

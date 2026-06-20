@@ -13,7 +13,10 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonContext.Default);
 });
 
-builder.Services.AddExeDevAuthentication();
+builder.Services.AddExeDevAuthentication(options =>
+{
+    options.RedirectToLoginOnChallenge = true;
+});
 builder.Services.AddExeDevOwnerPolicy();
 
 var app = builder.Build();
