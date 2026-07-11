@@ -36,21 +36,25 @@ public static class ExeDevClaimsPrincipalExtensions
     {
         ArgumentNullException.ThrowIfNull(principal);
 
-        if (principal.Identity?.IsAuthenticated != true)
+        foreach (ClaimsIdentity identity in principal.Identities)
         {
-            user = null;
-            return false;
+            if (!identity.IsAuthenticated)
+            {
+                continue;
+            }
+
+            string? userId = identity.FindFirst(ExeDevAuthenticationDefaults.UserIdClaimType)?.Value;
+            string? email = identity.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(email))
+            {
+                continue;
+            }
+
+            user = new ExeDevUser(userId, email);
+            return true;
         }
 
-        string? userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        string? email = principal.FindFirstValue(ClaimTypes.Email);
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(email))
-        {
-            user = null;
-            return false;
-        }
-
-        user = new ExeDevUser(userId, email);
-        return true;
+        user = null;
+        return false;
     }
 }

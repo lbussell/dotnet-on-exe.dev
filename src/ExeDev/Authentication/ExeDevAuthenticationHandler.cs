@@ -40,6 +40,7 @@ public sealed class ExeDevAuthenticationHandler(
 
         List<Claim> claims =
         [
+            new Claim(ExeDevAuthenticationDefaults.UserIdClaimType, userId),
             new Claim(ClaimTypes.NameIdentifier, userId),
             new Claim(ClaimTypes.Email, email),
             new Claim(ClaimTypes.Name, email),

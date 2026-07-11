@@ -23,4 +23,6 @@ public static class ExeDevAuthenticationDefaults
 
     /// <summary>Query parameter used by exe.dev's login endpoint for the post-login return path.</summary>
     public const string LoginRedirectParameterName = "redirect";
+
+    internal const string UserIdClaimType = "https://exe.dev/claims/user-id";
 }
