@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using Microsoft.Extensions.Logging;
 
 namespace LoganBussell.ExeDev.Integrations.Reflection;
 
@@ -12,8 +9,7 @@ namespace LoganBussell.ExeDev.Integrations.Reflection;
 /// Default <see cref="IExeDevReflection"/> implementation backed by an
 /// <see cref="HttpClient"/> pointed at the reflection integration.
 /// </summary>
-public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDevReflectionService> logger)
-    : IExeDevReflection
+public sealed class ExeDevReflectionService(HttpClient httpClient) : IExeDevReflection
 {
     /// <summary>Base address of the exe.dev reflection integration.</summary>
     public static readonly Uri BaseAddress = new("https://reflection.int.exe.xyz/");
@@ -23,7 +19,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
 
     public async Task<string?> GetOwnerEmailAsync(CancellationToken cancellationToken = default)
     {
-        EmailResponse? response = await FetchAsync(
+        EmailResponse? response = await httpClient.GetFromJsonAsync(
             "email",
             ExeDevReflectionJsonContext.Default.EmailResponse,
             cancellationToken
@@ -35,7 +31,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
         CancellationToken cancellationToken = default
     )
     {
-        IntegrationsResponse? response = await FetchAsync(
+        IntegrationsResponse? response = await httpClient.GetFromJsonAsync(
             "integrations",
             ExeDevReflectionJsonContext.Default.IntegrationsResponse,
             cancellationToken
@@ -45,7 +41,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
 
     public async Task<IReadOnlyList<string>> GetTagsAsync(CancellationToken cancellationToken = default)
     {
-        TagsResponse? response = await FetchAsync(
+        TagsResponse? response = await httpClient.GetFromJsonAsync(
             "tags",
             ExeDevReflectionJsonContext.Default.TagsResponse,
             cancellationToken
@@ -55,7 +51,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
 
     public async Task<string?> GetCommentAsync(CancellationToken cancellationToken = default)
     {
-        CommentResponse? response = await FetchAsync(
+        CommentResponse? response = await httpClient.GetFromJsonAsync(
             "comment",
             ExeDevReflectionJsonContext.Default.CommentResponse,
             cancellationToken
@@ -65,44 +61,11 @@ public sealed class ExeDevReflectionService(HttpClient httpClient, ILogger<ExeDe
 
     public async Task<int?> GetDefaultPortAsync(CancellationToken cancellationToken = default)
     {
-        DefaultPortResponse? response = await FetchAsync(
+        DefaultPortResponse? response = await httpClient.GetFromJsonAsync(
             "default_port",
             ExeDevReflectionJsonContext.Default.DefaultPortResponse,
             cancellationToken
         );
         return response?.DefaultPort;
-    }
-
-    private async Task<T?> FetchAsync<T>(string path, JsonTypeInfo<T> typeInfo, CancellationToken cancellationToken)
-        where T : class
-    {
-        try
-        {
-            return await httpClient.GetFromJsonAsync(path, typeInfo, cancellationToken);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch (OperationCanceledException ex)
-        {
-            logger.LogWarning(ex, "Timed out reading '{Path}' from the exe.dev reflection integration.", path);
-            return null;
-        }
-        catch (HttpRequestException ex)
-        {
-            logger.LogWarning(ex, "Unable to read '{Path}' from the exe.dev reflection integration.", path);
-            return null;
-        }
-        catch (JsonException ex)
-        {
-            logger.LogWarning(ex, "Invalid JSON reading '{Path}' from the exe.dev reflection integration.", path);
-            return null;
-        }
-        catch (NotSupportedException ex)
-        {
-            logger.LogWarning(ex, "Unable to read '{Path}' from the exe.dev reflection integration.", path);
-            return null;
-        }
     }
 }
