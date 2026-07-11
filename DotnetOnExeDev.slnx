@@ -4,4 +4,7 @@
     <Project Path="src/ExeDev.Tests/ExeDev.Tests.csproj" />
     <Project Path="src/DemoApp/DemoApp.csproj" />
   </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/EmailSample/EmailSample.csproj" />
+  </Folder>
 </Solution>
