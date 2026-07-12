@@ -21,4 +21,18 @@ public sealed record ExeDevEmailMessage(
     string? References = null
 );
 
+/// <summary>
+/// An email delivered to the exe.dev VM.
+/// </summary>
+/// <param name="DeliveryId">The opaque Maildir identifier for this delivery.</param>
+/// <param name="DeliveredTo">
+/// The envelope recipient from exe.dev's injected <c>Delivered-To</c> header.
+/// </param>
+/// <param name="Content">The complete email content as delivered by exe.dev.</param>
+public sealed record ExeDevEmailDelivery(
+    string DeliveryId,
+    string DeliveredTo,
+    ReadOnlyMemory<byte> Content
+);
+
 internal sealed record ExeDevEmailResponse(bool Success, string? Error);
