@@ -2,24 +2,19 @@
 // SPDX-License-Identifier: MIT
 
 using System.Net.Http.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace LoganBussell.ExeDev.Integrations.Reflection;
 
-/// <summary>
-/// Default <see cref="IExeDevReflection"/> implementation backed by an
-/// <see cref="HttpClient"/> pointed at the reflection integration.
-/// </summary>
-public sealed class ExeDevReflectionService(HttpClient httpClient) : IExeDevReflection
+internal sealed class ExeDevReflectionService(IHttpClientFactory httpClientFactory) : IExeDevReflection
 {
-    /// <summary>Base address of the exe.dev reflection integration.</summary>
-    public static readonly Uri BaseAddress = new("https://reflection.int.exe.xyz/");
-
-    /// <summary>Maximum time to wait for reflection integration responses.</summary>
-    public static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+    internal const string HttpClientName = "LoganBussell.ExeDev.Integrations.Reflection";
+    internal static readonly Uri BaseAddress = new("https://reflection.int.exe.xyz/");
+    internal static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     public async Task<string?> GetOwnerEmailAsync(CancellationToken cancellationToken = default)
     {
-        EmailResponse? response = await httpClient.GetFromJsonAsync(
+        EmailResponse? response = await GetAsync(
             "email",
             ExeDevReflectionJsonContext.Default.EmailResponse,
             cancellationToken
@@ -31,7 +26,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient) : IExeDevRefl
         CancellationToken cancellationToken = default
     )
     {
-        IntegrationsResponse? response = await httpClient.GetFromJsonAsync(
+        IntegrationsResponse? response = await GetAsync(
             "integrations",
             ExeDevReflectionJsonContext.Default.IntegrationsResponse,
             cancellationToken
@@ -41,7 +36,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient) : IExeDevRefl
 
     public async Task<IReadOnlyList<string>> GetTagsAsync(CancellationToken cancellationToken = default)
     {
-        TagsResponse? response = await httpClient.GetFromJsonAsync(
+        TagsResponse? response = await GetAsync(
             "tags",
             ExeDevReflectionJsonContext.Default.TagsResponse,
             cancellationToken
@@ -51,7 +46,7 @@ public sealed class ExeDevReflectionService(HttpClient httpClient) : IExeDevRefl
 
     public async Task<string?> GetCommentAsync(CancellationToken cancellationToken = default)
     {
-        CommentResponse? response = await httpClient.GetFromJsonAsync(
+        CommentResponse? response = await GetAsync(
             "comment",
             ExeDevReflectionJsonContext.Default.CommentResponse,
             cancellationToken
@@ -61,11 +56,21 @@ public sealed class ExeDevReflectionService(HttpClient httpClient) : IExeDevRefl
 
     public async Task<int?> GetDefaultPortAsync(CancellationToken cancellationToken = default)
     {
-        DefaultPortResponse? response = await httpClient.GetFromJsonAsync(
+        DefaultPortResponse? response = await GetAsync(
             "default_port",
             ExeDevReflectionJsonContext.Default.DefaultPortResponse,
             cancellationToken
         );
         return response?.DefaultPort;
+    }
+
+    private async Task<T?> GetAsync<T>(
+        string path,
+        JsonTypeInfo<T> jsonTypeInfo,
+        CancellationToken cancellationToken
+    )
+    {
+        using HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
+        return await httpClient.GetFromJsonAsync(path, jsonTypeInfo, cancellationToken);
     }
 }
