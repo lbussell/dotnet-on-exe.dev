@@ -8,7 +8,7 @@ namespace LoganBussell.ExeDev.Integrations.Email;
 internal sealed class ExeDevEmailService(IHttpClientFactory httpClientFactory)
     : IExeDevEmailService
 {
-    internal const string HttpClientName = "LoganBussell.ExeDev.Email";
+    internal const string HttpClientName = "LoganBussell.ExeDev.Integrations.Email";
     internal static readonly Uri BaseAddress = new("http://169.254.169.254/");
     internal static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 

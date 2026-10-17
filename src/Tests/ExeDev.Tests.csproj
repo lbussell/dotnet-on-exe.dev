@@ -16,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExeDev\ExeDev.csproj" />
+    <ProjectReference Include="..\Authentication\ExeDev.Authentication.csproj" />
+    <ProjectReference Include="..\Integrations.Email\ExeDev.Integrations.Email.csproj" />
+    <ProjectReference Include="..\Integrations.Notify\ExeDev.Integrations.Notify.csproj" />
+    <ProjectReference Include="..\Integrations.Reflection\ExeDev.Integrations.Reflection.csproj" />
   </ItemGroup>
 
   <ItemGroup>

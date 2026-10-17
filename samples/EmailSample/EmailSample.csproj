@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="..\..\src\ExeDev\ExeDev.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <ProjectReference Include="..\..\src\Integrations.Email\ExeDev.Integrations.Email.csproj" />
+    <ProjectReference Include="..\..\src\Integrations.Reflection\ExeDev.Integrations.Reflection.csproj" />
   </ItemGroup>
 </Project>

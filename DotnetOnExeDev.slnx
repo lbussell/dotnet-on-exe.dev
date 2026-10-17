@@ -1,7 +1,10 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/ExeDev/ExeDev.csproj" />
-    <Project Path="src/ExeDev.Tests/ExeDev.Tests.csproj" />
+    <Project Path="src/Authentication/ExeDev.Authentication.csproj" />
+    <Project Path="src/Integrations.Email/ExeDev.Integrations.Email.csproj" />
+    <Project Path="src/Integrations.Notify/ExeDev.Integrations.Notify.csproj" />
+    <Project Path="src/Integrations.Reflection/ExeDev.Integrations.Reflection.csproj" />
+    <Project Path="src/Tests/ExeDev.Tests.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/AuthSample/AuthSample.csproj" />

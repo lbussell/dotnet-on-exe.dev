@@ -7,6 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ExeDev\ExeDev.csproj" />
+    <ProjectReference Include="..\..\src\Authentication\ExeDev.Authentication.csproj" />
   </ItemGroup>
 </Project>

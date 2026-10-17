@@ -5,11 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsAotCompatible>true</IsAotCompatible>
     <RootNamespace>LoganBussell.ExeDev</RootNamespace>
-    <AssemblyName>LoganBussell.ExeDev</AssemblyName>
-    <PackageId>LoganBussell.ExeDev</PackageId>
+    <AssemblyName>LoganBussell.ExeDev.Authentication</AssemblyName>
+    <PackageId>LoganBussell.ExeDev.Authentication</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Integrations.Reflection\ExeDev.Integrations.Reflection.csproj" />
   </ItemGroup>
 </Project>

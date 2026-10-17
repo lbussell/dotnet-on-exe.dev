@@ -8,7 +8,7 @@ namespace LoganBussell.ExeDev.Integrations.Notify;
 internal sealed class ExeDevNotifyService(IHttpClientFactory httpClientFactory)
     : IExeDevNotifyService
 {
-    internal const string HttpClientName = "LoganBussell.ExeDev.Notify";
+    internal const string HttpClientName = "LoganBussell.ExeDev.Integrations.Notify";
     internal static readonly Uri BaseAddress = new("https://notify.int.exe.xyz/");
     internal static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
