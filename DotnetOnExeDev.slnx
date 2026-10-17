@@ -2,9 +2,9 @@
   <Folder Name="/src/">
     <Project Path="src/ExeDev/ExeDev.csproj" />
     <Project Path="src/ExeDev.Tests/ExeDev.Tests.csproj" />
-    <Project Path="src/DemoApp/DemoApp.csproj" />
   </Folder>
   <Folder Name="/samples/">
+    <Project Path="samples/AuthSample/AuthSample.csproj" />
     <Project Path="samples/EmailSample/EmailSample.csproj" />
     <Project Path="samples/EmailReceivingSample/EmailReceivingSample.csproj" />
   </Folder>

@@ -7,6 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExeDev\ExeDev.csproj" />
+    <ProjectReference Include="..\..\src\ExeDev\ExeDev.csproj" />
   </ItemGroup>
 </Project>
