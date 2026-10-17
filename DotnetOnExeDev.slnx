@@ -7,5 +7,6 @@
     <Project Path="samples/AuthSample/AuthSample.csproj" />
     <Project Path="samples/EmailSample/EmailSample.csproj" />
     <Project Path="samples/EmailReceivingSample/EmailReceivingSample.csproj" />
+    <Project Path="samples/NotifySample/NotifySample.csproj" />
   </Folder>
 </Solution>
